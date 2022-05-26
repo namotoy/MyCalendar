@@ -3,8 +3,9 @@
 console.clear();
 
 {
-  const year = 2022;
-  const month = 4;
+  const today = new Date();
+  let year = today.getFullYear();
+  let month = today.getMonth();
 
   function getCalendarHead() {
     const dates = [];
@@ -32,6 +33,11 @@ function getCalendarBody(){
       isDisabled: false,
     });
   }
+
+  if(year === today.getFullYear() && month === today.getMonth()){
+    dates[today.getDate() - 1].isToday = true;
+  }
+  
   return dates;
 }
 
@@ -45,10 +51,24 @@ function getCalendarTail(){
       isDisabled: true,
     });
   }
+
   return dates;
 }
 
-function createCalendar(){
+function clearCalendar(){
+  const tbody = document.querySelector('tbody');
+
+  while(tbody.firstChild){
+    tbody.removeChild(tbody.firstChild);
+  }
+}
+
+function renderTitle(){
+  const title = `${year}/${String(month + 1).padStart(2,'0')}`;
+  document.getElementById('title').textContent = title;
+}
+
+function renderWeeks(){
   const dates = [
     ...getCalendarHead(),
     ...getCalendarBody(),
@@ -80,6 +100,40 @@ function createCalendar(){
     document.querySelector('tbody').appendChild(tr);
   });
 }
+
+function createCalendar(){
+  clearCalendar();
+  renderTitle();
+  renderWeeks();
+}
+
+document.getElementById('prev').addEventListener('click',()=>{
+  month--;
+  if(month<0){
+    year--;
+    month = 11;
+  }
+
+  createCalendar();
+});
+
+document.getElementById('next').addEventListener('click',()=>{
+  month++;
+  if(month>11){
+    year++;
+    month = 0;
+  }
+
+  createCalendar();
+});
+
+document.getElementById('today').addEventListener('click',()=>{
+  year = today.getFullYear();
+  month = today.getMonth();
+
+  createCalendar();
+});
+
 createCalendar();
 
 }
